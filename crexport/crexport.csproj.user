@@ -19,7 +19,7 @@
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
     <RemoteDebugMachine />
     <StartAction>Project</StartAction>
-    <StartArguments />
+    <StartArguments>-F C:\HR\_Electron-AUTO\resources\PowerShell\rpt\CheckLogin\LoginCheck.rpt -E "csv"  -a "Token:636300135206847568" -O C:\HR\CR_LOGIN.tkn -U ***REMOVED*** -P ***REMOVED*** -l</StartArguments>
     <StartPage />
     <StartProgram />
     <StartURL />
@@ -34,7 +34,7 @@
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
     <RemoteDebugMachine />
     <StartAction>Project</StartAction>
-    <StartArguments />
+    <StartArguments>-F C:\HR\_Electron-AUTO\resources\PowerShell\rpt\CheckLogin\LoginCheck.rpt -E "csv"  -a "Token:636300135206847568" -O C:\HR\CR_LOGIN.tkn -U ***REMOVED*** -P ***REMOVED*** -l</StartArguments>
     <StartPage />
     <StartProgram />
     <StartURL />

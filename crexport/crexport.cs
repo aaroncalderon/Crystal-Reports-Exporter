@@ -267,6 +267,18 @@ namespace crexport
                                 }
 
                                 table.ApplyLogOnInfo(logonInfo);
+
+                                if (!table.TestConnectivity())
+                                {
+                                    WriteLog("Failed to apply log in info for Crystal Report {" + table.Name + "]");
+                                    Console.WriteLine("Failed to apply log in info for Crystal Report {" + table.Name + "]");
+                                } else {
+                                    Console.WriteLine("Connection to [" + table.Name + "] was successful.");
+                                    Console.WriteLine(table.LogOnInfo.ConnectionInfo.ServerName);
+                                    Console.WriteLine(table.LogOnInfo.ConnectionInfo.DatabaseName);
+                                    Console.WriteLine(table.LogOnInfo.ConnectionInfo.UserID);
+                                    Console.WriteLine(table.LogOnInfo.ConnectionInfo.Password);
+                                }
                             }
 
 
@@ -400,7 +412,7 @@ namespace crexport
                             DiskFileDestinationOptions diskOptions = new DiskFileDestinationOptions();
                             Report.ExportOptions.DestinationOptions = diskOptions;
                             diskOptions.DiskFileName = rptinfo.OutputPath;
-
+                            
                             Report.Export();
                             if (enableLog)
                                 WriteLog("Report exported to : " + rptinfo.OutputPath);
@@ -434,9 +446,10 @@ namespace crexport
                         DisplayMessage(1);
                     }
 
-                    catch (LogOnException)
+                    catch (LogOnException Er)
                     {
-                        Console.WriteLine("\nError: Failed to logon to Database. Check username, password, server name and database name parameter");
+                        Console.WriteLine("\nError: Failed to logon to Database. Check username, password, server name and database name parameter. \n");
+                        Console.WriteLine(Er);
                         if (enableLog)
                             WriteLog("Error : Failed to logon to Database. Check username, password, server name and database name parameter");
                     }
