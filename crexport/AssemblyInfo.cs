@@ -31,11 +31,11 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("Crystal Report Exporter")]
+[assembly: AssemblyTitle("Crystal Reports Exporter")]
 [assembly: AssemblyDescription("A command line tool that export specified crystal report")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rainforest Software Solution")]
-[assembly: AssemblyProduct("Crystal Report Exporter")]
+[assembly: AssemblyProduct("Crystal Reports Exporter")]
 [assembly: AssemblyCopyright("Rainforest Software Solution")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
@@ -45,13 +45,13 @@ using System.Runtime.CompilerServices;
 //
 //      Major Version
 //      Minor Version 
-//      Build Number
-//      Revision
+//      Year (YY)
+//      Date (MMDD)
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.0.*")]
+[assembly: AssemblyVersion("2.1.11.1207")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
