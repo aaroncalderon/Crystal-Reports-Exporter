@@ -308,6 +308,10 @@ namespace crexport
                                 {
                                     WriteLog("Failed to apply log in info for Crystal Report {" + table.Name + "]");
                                     Console.WriteLine("Failed to apply log in info for Crystal Report {" + table.Name + "]");
+                                    Console.WriteLine("ServerName: " + table.LogOnInfo.ConnectionInfo.ServerName);
+                                    Console.WriteLine("DatabaseName" + table.LogOnInfo.ConnectionInfo.DatabaseName);
+                                    Console.WriteLine("UserID: " + table.LogOnInfo.ConnectionInfo.UserID);
+                                    Console.WriteLine("Password: " + table.LogOnInfo.ConnectionInfo.Password);
                                 }
                                 else
                                 {
@@ -350,9 +354,14 @@ namespace crexport
                                 // Break it all down
                                 //
                                 Report.VerifyDatabase();
+                                Console.WriteLine("VerifyDatabase: ");
+                                if (enableLog)
+                                    WriteLog("VerifyDatabase:");
                             }
                             catch (LogOnException excLogon)
                             {
+                                if (enableLog)
+                                    WriteLog("VerifyDatabase:");
                                 Console.WriteLine(excLogon.Message);
                             }
                         }
