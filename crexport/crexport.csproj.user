@@ -19,7 +19,7 @@
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
     <RemoteDebugMachine />
     <StartAction>Project</StartAction>
-    <StartArguments>-F C:\HR\_Electron-AUTO\resources\PowerShell\rpt\CheckLogin\LoginCheck.rpt -E "csv"  -a "Token:636300135206847568" -O C:\HR\CR_LOGIN.tkn -U ***REMOVED*** -P ***REMOVED*** -l</StartArguments>
+    <StartArguments></StartArguments>
     <StartPage />
     <StartProgram />
     <StartURL />
@@ -34,7 +34,7 @@
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
     <RemoteDebugMachine />
     <StartAction>Project</StartAction>
-    <StartArguments>-F C:\HR\_Electron-AUTO\resources\PowerShell\rpt\CheckLogin\LoginCheck.rpt -E "csv"  -a "Token:636300135206847568" -O C:\HR\CR_LOGIN.tkn -U ***REMOVED*** -P ***REMOVED*** -l</StartArguments>
+    <StartArguments></StartArguments>
     <StartPage />
     <StartProgram />
     <StartURL />
@@ -42,11 +42,11 @@
     <StartWithIE>true</StartWithIE>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <StartArguments>-F C:\HR\_Electron-AUTO\resources\PowerShell\rpt\CheckLogin\LoginCheck.rpt -E "csv"  -a "Token:636300135206847568" -O C:\HR\CR_LOGIN.tkn -U ***REMOVED*** -P ***REMOVED*** -l</StartArguments>
+    <StartArguments></StartArguments>
     <StartWithIE>true</StartWithIE>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <StartArguments>-F C:\HR\_Electron-AUTO\resources\PowerShell\rpt\CheckLogin\LoginCheck.rpt -E "csv"  -a "Token:636300135206847568" -O C:\HR\CR_LOGIN.tkn -U ***REMOVED*** -P ***REMOVED*** -l</StartArguments>
+    <StartArguments></StartArguments>
     <StartWithIE>true</StartWithIE>
   </PropertyGroup>
 </Project>
