@@ -4,13 +4,13 @@
         /// </source>
         /// 
         /// <summary>
-        /// Defines the datasource connectivity information for the report
+        /// Defines the datasource connectivity information for the rptinfo
         /// </summary>
-        /// <param name="document">Crystal Report ReportDocument</param>
-        /// <param name="report">Report object</param>
-        private void ApplyLoginInfo(ReportDocument document, Report report)
+        /// <param name="Report">Crystal Report ReportDocument</param>
+        /// <param name="rptinfo">Report object</param>
+        private void ApplyLoginInfo(ReportDocument Report, Report rptinfo)
         {
-            TableLogOnInfo info = null;
+            TableLogOnInfo logonInfo = null;
  
             try
             {
@@ -19,23 +19,23 @@
                 //
                 // Define credentials
                 //
-                info = new TableLogOnInfo();
+                logonInfo = new TableLogOnInfo();
  
-                info.ConnectionInfo.AllowCustomConnection = true;                
-                info.ConnectionInfo.ServerName = report.Server;
-                info.ConnectionInfo.DatabaseName = report.Database;                
+                logonInfo.ConnectionInfo.AllowCustomConnection = true;                
+                logonInfo.ConnectionInfo.ServerName = rptinfo.Server;
+                logonInfo.ConnectionInfo.DatabaseName = rptinfo.Database;                
  
                 //
-                // Set the userid/password for the report if we are not using integrated security
+                // Set the userid/password for the rptinfo if we are not using integrated security
                 //
-                if (report.IntegratedSecurity)
+                if (rptinfo.IntegratedSecurity)
                 {
-                    info.ConnectionInfo.IntegratedSecurity = true;
+                    logonInfo.ConnectionInfo.IntegratedSecurity = true;
                 }
                 else
                 {
-                    info.ConnectionInfo.Password = report.Password;
-                    info.ConnectionInfo.UserID = report.UserId;
+                    logonInfo.ConnectionInfo.Password = rptinfo.Password;
+                    logonInfo.ConnectionInfo.UserID = rptinfo.UserId;
                 }
  
                 #endregion
@@ -45,49 +45,49 @@
                 //
                 // Main connection?
                 //
-                document.SetDatabaseLogon(info.ConnectionInfo.UserID,
-                    info.ConnectionInfo.Password,
-                    info.ConnectionInfo.ServerName,
-                    info.ConnectionInfo.DatabaseName,
+                Report.SetDatabaseLogon(logonInfo.ConnectionInfo.UserID,
+                    logonInfo.ConnectionInfo.Password,
+                    logonInfo.ConnectionInfo.ServerName,
+                    logonInfo.ConnectionInfo.DatabaseName,
                     false);
  
                 //
                 // Other connections?
                 //
-                foreach (CrystalDecisions.Shared.IConnectionInfo connection in document.DataSourceConnections)
+                foreach (CrystalDecisions.Shared.IConnectionInfo connection in Report.DataSourceConnections)
                 {                    
-                    connection.SetConnection(report.Server, report.Database, report.IntegratedSecurity);
-                    connection.SetLogon(report.UserId, report.Password);
-                    connection.LogonProperties.Set("Data Source", report.Server);
-                    connection.LogonProperties.Set("Initial Catalog", report.Database);
+                    connection.SetConnection(rptinfo.Server, rptinfo.Database, rptinfo.IntegratedSecurity);
+                    connection.SetLogon(rptinfo.UserId, rptinfo.Password);
+                    connection.LogonProperties.Set("Data Source", rptinfo.Server);
+                    connection.LogonProperties.Set("Initial Catalog", rptinfo.Database);
                 }
  
                 //
-                // Only do this to the main report (can't do it to sub reports)
+                // Only do this to the main rptinfo (can't do it to sub reports)
                 //
-                if (!document.IsSubreport)
+                if (!Report.IsSubreport)
                 {
                     //
                     // Apply to subreports
                     //                
-                    foreach (ReportDocument rd in document.Subreports)
+                    foreach (ReportDocument rd in Report.Subreports)
                     {
-                        ApplyLoginInfo(rd, report);                        
+                        ApplyLoginInfo(rd, rptinfo);                        
                     }
                 }
  
                 //
                 // Apply to tables
                 //
-                foreach (CrystalDecisions.CrystalReports.Engine.Table table in document.Database.Tables)
+                foreach (CrystalDecisions.CrystalReports.Engine.Table table in Report.Database.Tables)
                 {
                     TableLogOnInfo tableLogOnInfo = table.LogOnInfo;
                                         
-                    tableLogOnInfo.ConnectionInfo = info.ConnectionInfo;                    
+                    tableLogOnInfo.ConnectionInfo = logonInfo.ConnectionInfo;                    
                     table.ApplyLogOnInfo(tableLogOnInfo);
                     if (!table.TestConnectivity())
                     {
-                        Debug.WriteLine("Failed to apply log in info for Crystal Report");
+                        Debug.WriteLine("Failed to apply log in logonInfo for Crystal Report");
                     }
                 }
  
@@ -98,7 +98,7 @@
                     //
                     // Break it all down
                     //
-                    document.VerifyDatabase();
+                    Report.VerifyDatabase();
                 }
                 catch (LogOnException excLogon)
                 {
@@ -107,7 +107,7 @@
             }
             catch (Exception ex)
             {
-                throw new ApplicationException("Failed to apply login information to the report - " +
+                throw new ApplicationException("Failed to apply login information to the rptinfo - " +
                     ex.Message);
             }
         }
