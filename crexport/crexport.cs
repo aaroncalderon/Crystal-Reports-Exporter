@@ -205,7 +205,12 @@ namespace crexport
                                 WriteLog("Integrated Security = " + Report.DataSourceConnections[i].IntegratedSecurity.ToString());
                                 WriteLog("Default Server Name = " + Report.DataSourceConnections[i].ServerName);
                                 WriteLog("Default Database Name = " + Report.DataSourceConnections[i].DatabaseName);
+                                Console.WriteLine(Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("VendorType").Value);
+                                //WriteLog("Databasee = " + Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("Database").Value);
+                                //WriteLog("Data Source = " + Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("Data Source").Value);
                                 //todo: find out how to get database type like sql server, access, oracle...etc
+                                //done: does this solve the fulfill the todo?
+                                WriteLog("VendorType = " + Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("VendorType").Value); 
                             }
                         }
 
@@ -215,59 +220,90 @@ namespace crexport
                             #region Logon to Database
 
                             TableLogOnInfo logonInfo = new TableLogOnInfo();
-                            foreach (Table table in Report.Database.Tables)
+                            #region set logon parameters
+
+                            if (rptinfo.ServerName != null)
                             {
-                                if (rptinfo.ServerName != null)
+                                logonInfo.ConnectionInfo.ServerName = rptinfo.ServerName;
+
+                                if (enableLog)
+                                    WriteLog("Logon to Server = " + rptinfo.ServerName);
+                            }
+
+                            if (rptinfo.DatabaseName != null)
+                            {
+                                logonInfo.ConnectionInfo.DatabaseName = rptinfo.DatabaseName;
+
+                                if (enableLog)
+                                    WriteLog("Logon to Database = " + rptinfo.DatabaseName);
+                            }
+
+                            if (rptinfo.Username == null && rptinfo.Password == null)
+                            {
+                                logonInfo.ConnectionInfo.IntegratedSecurity = true;
+
+                                if (enableLog)
+                                    WriteLog("Integrated Security = true ");
+                            }
+                            else
+                            {
+                                if (rptinfo.Username != null && rptinfo.Username.Length > 0)
                                 {
-                                    logonInfo.ConnectionInfo.ServerName = rptinfo.ServerName;
+                                    logonInfo.ConnectionInfo.UserID = rptinfo.Username;
 
                                     if (enableLog)
-                                        WriteLog("Logon to Server = " + rptinfo.ServerName);
+                                        WriteLog("Logon with user id = " + rptinfo.Username);
                                 }
 
-                                if (rptinfo.DatabaseName != null)
+                                if (rptinfo.Password == null) //to support blank password
                                 {
-                                    logonInfo.ConnectionInfo.DatabaseName = rptinfo.DatabaseName;
+                                    logonInfo.ConnectionInfo.Password = "";
 
                                     if (enableLog)
-                                        WriteLog("Logon to Database = " + rptinfo.DatabaseName);
-                                }
-
-                                if (rptinfo.Username == null && rptinfo.Password == null)
-                                {
-                                    logonInfo.ConnectionInfo.IntegratedSecurity = true;
-
-                                    if (enableLog)
-                                        WriteLog("Integrated Security = true ");
+                                        WriteLog("Logon with blank password");
                                 }
                                 else
                                 {
-                                    if (rptinfo.Username != null && rptinfo.Username.Length > 0)
-                                    {
-                                        logonInfo.ConnectionInfo.UserID = rptinfo.Username;
+                                    logonInfo.ConnectionInfo.Password = rptinfo.Password;
 
-                                        if (enableLog)
-                                            WriteLog("Logon with user id = " + rptinfo.Username);
-                                    }
-
-                                    if (rptinfo.Password == null) //to support blank password
-                                    {
-                                        logonInfo.ConnectionInfo.Password = "";
-
-                                        if (enableLog)
-                                            WriteLog("Logon with blank password");
-                                    }
-                                    else
-                                    {
-                                        logonInfo.ConnectionInfo.Password = rptinfo.Password;
-
-                                        if (enableLog)
-                                            WriteLog("Logon with password = " + rptinfo.Password);
-                                    }
+                                    if (enableLog)
+                                        WriteLog("Logon with password = " + rptinfo.Password);
                                 }
+                            }
 
-                                table.ApplyLogOnInfo(logonInfo);
+                            #endregion 
 
+                            #region Apply to connections, tables and sub-reports
+
+                            //
+                            // Main connection?
+                            //
+                            Report.SetDatabaseLogon(logonInfo.ConnectionInfo.UserID,
+                                logonInfo.ConnectionInfo.Password,
+                                logonInfo.ConnectionInfo.ServerName,
+                                logonInfo.ConnectionInfo.DatabaseName,
+                                false);
+
+                            //
+                            // Other connections?
+                            //
+                            foreach (CrystalDecisions.Shared.IConnectionInfo connection in Report.DataSourceConnections)
+                            {
+                                connection.SetConnection(rptinfo.ServerName, rptinfo.DatabaseName, logonInfo.ConnectionInfo.IntegratedSecurity);
+                                connection.SetLogon(rptinfo.Username, rptinfo.Password);
+                                connection.LogonProperties.Set("Data Source", rptinfo.ServerName);
+                                connection.LogonProperties.Set("Initial Catalog", rptinfo.DatabaseName);
+                            }
+
+                            //
+                            // Apply to tables
+                            //
+                            foreach (CrystalDecisions.CrystalReports.Engine.Table table in Report.Database.Tables)
+                            {
+                                TableLogOnInfo tableLogOnInfo = table.LogOnInfo;
+
+                                tableLogOnInfo.ConnectionInfo = logonInfo.ConnectionInfo;
+                                table.ApplyLogOnInfo(tableLogOnInfo);
                                 if (!table.TestConnectivity())
                                 {
                                     WriteLog("Failed to apply log in info for Crystal Report {" + table.Name + "]");
@@ -283,8 +319,42 @@ namespace crexport
                                 }
                             }
 
+                            #endregion
+
+                            // we will potentially remove this section
+                            // foreach (Table table in Report.Database.Tables)
+                            // {
+                                
+
+                            //     table.ApplyLogOnInfo(logonInfo);
+
+                            //     if (!table.TestConnectivity())
+                            //     {
+                            //         WriteLog("Failed to apply log in info for Crystal Report {" + table.Name + "]");
+                            //         Console.WriteLine("Failed to apply log in info for Crystal Report {" + table.Name + "]");
+                            //     }
+                            //     else
+                            //     {
+                            //         Console.WriteLine("Connection to [" + table.Name + "] was successful.");
+                            //         Console.WriteLine(table.LogOnInfo.ConnectionInfo.ServerName);
+                            //         Console.WriteLine(table.LogOnInfo.ConnectionInfo.DatabaseName);
+                            //         Console.WriteLine(table.LogOnInfo.ConnectionInfo.UserID);
+                            //         Console.WriteLine(table.LogOnInfo.ConnectionInfo.Password);
+                            //     }
+                            // }
 
                             #endregion
+                            try
+                            {
+                                //
+                                // Break it all down
+                                //
+                                Report.VerifyDatabase();
+                            }
+                            catch (LogOnException excLogon)
+                            {
+                                Console.WriteLine(excLogon.Message);
+                            }
                         }
 
                         //Set the export file format
@@ -426,7 +496,7 @@ namespace crexport
                     {
                         Console.WriteLine("\nError: " + Er.Message);
                         if (enableLog)
-                            WriteLog("Error : " + Er.Message);
+                            WriteLog("Error NullArgumentException: " + Er.Message);
 
                         DisplayMessage(1);
                     }
@@ -434,7 +504,7 @@ namespace crexport
                     {
                         Console.WriteLine("\nError: " + Er.Message);
                         if (enableLog)
-                            WriteLog("Error : " + Er.Message);
+                            WriteLog("Error InvalidOutputException: " + Er.Message);
 
                         DisplayMessage(1);
                     }
@@ -443,7 +513,7 @@ namespace crexport
                     {
                         Console.WriteLine("\nError: " + Er.Message);
                         if (enableLog)
-                            WriteLog("Error : " + Er.Message);
+                            WriteLog("Error InvalidServerException: " + Er.Message);
 
                         DisplayMessage(1);
                     }
@@ -453,35 +523,35 @@ namespace crexport
                         Console.WriteLine("\nError: Failed to logon to Database. Check username, password, server name and database name parameter. \n");
                         Console.WriteLine(Er);
                         if (enableLog)
-                            WriteLog("Error : Failed to logon to Database. Check username, password, server name and database name parameter");
+                            WriteLog("Error LogOnException: Failed to logon to Database. Check username, password, server name and database name parameter");
                     }
 
                     catch (LoadSaveReportException)
                     {
                         Console.WriteLine("\nError: Failed to Load or save Crystal Reports file");
                         if (enableLog)
-                            WriteLog("Failed to Load or save Crystal Reports file");
+                            WriteLog("LoadSaveReportException: Failed to Load or save Crystal Reports file");
                     }
 
                     catch (NullParamNameException Er)
                     {
                         Console.WriteLine("\nError: {0}", Er.Message);
                         if (enableLog)
-                            WriteLog("Error : " + Er.Message);
+                            WriteLog("Error NullParamNameException: " + Er.Message);
                     }
 
                     catch (NullExportTypeException Er)
                     {
                         Console.WriteLine("\nError: {0}", Er.Message);
                         if (enableLog)
-                            WriteLog("Error : " + Er.Message);
+                            WriteLog("Error NullExportTypeException: " + Er.Message);
                     }
 
                     catch (Exception Er)
                     {
                         Console.WriteLine("\nMisc Error: {0}", Er.Message);
                         if (enableLog)
-                            WriteLog("Error : " + Er.Message);
+                            WriteLog("Error Exception: " + Er.Message);
                         DisplayMessage(1);
                     }
                     finally
