@@ -211,7 +211,7 @@ namespace crexport
                                 //WriteLog("Data Source = " + Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("Data Source").Value);
                                 //todo: find out how to get database type like sql server, access, oracle...etc
                                 //done: does this solve the fulfill the todo?
-                                WriteLog("VendorType = " + Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("VendorType").Value); 
+                                WriteLog("VendorType = " + Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("VendorType").Value);
                             }
                         }
 
@@ -567,6 +567,7 @@ namespace crexport
                         Console.WriteLine("\nMisc Error: {0}", Er.Message);
                         if (enableLog)
                             WriteLog("Error Exception: " + Er.Message);
+                            WriteLog("Error StackTrace: " + Er.StackTrace);
                         DisplayMessage(1);
                     }
                     finally
