@@ -133,7 +133,7 @@ namespace crexport
         [STAThread]
         static void Main(string[] args)
         {
-            logFilename = "crexport-" + System.DateTime.Now.ToString("yyyyMMddHHmmss")+".log";
+            logFilename = "crexport-" + System.DateTime.Now.ToString("yyyyMMddHHmmss") + ".log";
 
             try
             {
@@ -189,7 +189,7 @@ namespace crexport
                         //Report.Load(rptinfo.ReportPath, OpenReportMethod.OpenReportByTempCopy);
                         Report.Load(rptinfo.ReportPath, OpenReportMethod.OpenReportByDefault);
                         if (enableLog)
-                            WriteLog("Crystal Reports file "+rptinfo.ReportPath+" loaded");
+                            WriteLog("Crystal Reports file " + rptinfo.ReportPath + " loaded");
 
                         if (enableLog)
                         {
@@ -272,7 +272,9 @@ namespace crexport
                                 {
                                     WriteLog("Failed to apply log in info for Crystal Report {" + table.Name + "]");
                                     Console.WriteLine("Failed to apply log in info for Crystal Report {" + table.Name + "]");
-                                } else {
+                                }
+                                else
+                                {
                                     Console.WriteLine("Connection to [" + table.Name + "] was successful.");
                                     Console.WriteLine(table.LogOnInfo.ConnectionInfo.ServerName);
                                     Console.WriteLine(table.LogOnInfo.ConnectionInfo.DatabaseName);
@@ -297,8 +299,8 @@ namespace crexport
                             else
                             {
                                 System.Drawing.Printing.PrinterSettings prinSet = new System.Drawing.Printing.PrinterSettings();
-                                
-                                if (prinSet.PrinterName.Trim().Length>0)
+
+                                if (prinSet.PrinterName.Trim().Length > 0)
                                     Report.PrintOptions.PrinterName = prinSet.PrinterName;
                                 else
                                     throw new Exception("No printer name is specified");
@@ -346,7 +348,7 @@ namespace crexport
                         }
 
                         if (enableLog)
-                            WriteLog("Report Output format set to : "+rptinfo.OutputFormat.ToString());
+                            WriteLog("Report Output format set to : " + rptinfo.OutputFormat.ToString());
 
                         #endregion
 
@@ -392,7 +394,7 @@ namespace crexport
                         {
                             if (rptinfo.Refresh)
                                 Report.Refresh();
-                                //if report document doesn't come with parameter, just refresh it and job done!
+                            //if report document doesn't come with parameter, just refresh it and job done!
                         }
 
                         if (enableLog)
@@ -412,7 +414,7 @@ namespace crexport
                             DiskFileDestinationOptions diskOptions = new DiskFileDestinationOptions();
                             Report.ExportOptions.DestinationOptions = diskOptions;
                             diskOptions.DiskFileName = rptinfo.OutputPath;
-                            
+
                             Report.Export();
                             if (enableLog)
                                 WriteLog("Report exported to : " + rptinfo.OutputPath);
@@ -579,7 +581,7 @@ namespace crexport
             return singleValue;
         }
 
-        private static void AddParameter(ref ParameterValues pValues, DiscreteOrRangeKind DoR,string inputString, string pName)
+        private static void AddParameter(ref ParameterValues pValues, DiscreteOrRangeKind DoR, string inputString, string pName)
         {
             ParameterValue paraValue;
             if (DoR == DiscreteOrRangeKind.DiscreteValue || (DoR == DiscreteOrRangeKind.DiscreteAndRangeValue && inputString.IndexOf("(") == -1))
@@ -587,10 +589,10 @@ namespace crexport
                 paraValue = new ParameterDiscreteValue();
                 ((ParameterDiscreteValue)paraValue).Value = inputString;
                 Console.WriteLine("Discrete Parameter : {0} = {1}", pName, ((ParameterDiscreteValue)paraValue).Value);
-                
+
                 if (enableLog)
-                    WriteLog("Discrete Parameter : "+pName+" = "+((ParameterDiscreteValue)paraValue).Value);
-                
+                    WriteLog("Discrete Parameter : " + pName + " = " + ((ParameterDiscreteValue)paraValue).Value);
+
                 pValues.Add(paraValue);
                 paraValue = null;
             }
@@ -647,5 +649,114 @@ namespace crexport
             }
             return builder.ToString();
         }
+
+    //    /// <summary>
+    //    /// Defines the datasource connectivity information for the report
+    //    /// </summary>
+    //    /// <param name="document">Crystal Report ReportDocument</param>
+    //    /// <param name="report">Report object</param>
+    //    private void ApplyLoginInfo(ReportDocument document, Report report)
+    //    {
+    //        TableLogOnInfo info = null;
+
+    //        try
+    //        {
+    //            #region Credentials
+
+    //            //
+    //            // Define credentials
+    //            //
+    //            info = new TableLogOnInfo();
+
+    //            info.ConnectionInfo.AllowCustomConnection = true;
+    //            info.ConnectionInfo.ServerName = report.Server;
+    //            info.ConnectionInfo.DatabaseName = report.Database;
+
+    //            //
+    //            // Set the userid/password for the report if we are not using integrated security
+    //            //
+    //            if (report.IntegratedSecurity)
+    //            {
+    //                info.ConnectionInfo.IntegratedSecurity = true;
+    //            }
+    //            else
+    //            {
+    //                info.ConnectionInfo.Password = report.Password;
+    //                info.ConnectionInfo.UserID = report.UserId;
+    //            }
+
+    //            #endregion
+
+    //            #region Apply to connections, tables and sub-reports
+
+    //            //
+    //            // Main connection?
+    //            //
+    //            document.SetDatabaseLogon(info.ConnectionInfo.UserID,
+    //                info.ConnectionInfo.Password,
+    //                info.ConnectionInfo.ServerName,
+    //                info.ConnectionInfo.DatabaseName,
+    //                false);
+
+    //            //
+    //            // Other connections?
+    //            //
+    //            foreach (CrystalDecisions.Shared.IConnectionInfo connection in document.DataSourceConnections)
+    //            {
+    //                connection.SetConnection(report.Server, report.Database, report.IntegratedSecurity);
+    //                connection.SetLogon(report.UserId, report.Password);
+    //                connection.LogonProperties.Set("Data Source", report.Server);
+    //                connection.LogonProperties.Set("Initial Catalog", report.Database);
+    //            }
+
+    //            //
+    //            // Only do this to the main report (can't do it to sub reports)
+    //            //
+    //            if (!document.IsSubreport)
+    //            {
+    //                //
+    //                // Apply to subreports
+    //                //                
+    //                foreach (ReportDocument rd in document.Subreports)
+    //                {
+    //                    ApplyLoginInfo(rd, report);
+    //                }
+    //            }
+
+    //            //
+    //            // Apply to tables
+    //            //
+    //            foreach (CrystalDecisions.CrystalReports.Engine.Table table in document.Database.Tables)
+    //            {
+    //                TableLogOnInfo tableLogOnInfo = table.LogOnInfo;
+
+    //                tableLogOnInfo.ConnectionInfo = info.ConnectionInfo;
+    //                table.ApplyLogOnInfo(tableLogOnInfo);
+    //                if (!table.TestConnectivity())
+    //                {
+    //                    Console.WriteLine("Failed to apply log in info for Crystal Report");
+    //                }
+    //            }
+
+    //            #endregion
+
+    //            try
+    //            {
+    //                //
+    //                // Break it all down
+    //                //
+    //                document.VerifyDatabase();
+    //            }
+    //            catch (LogOnException excLogon)
+    //            {
+    //                Console.WriteLine(excLogon.Message);
+    //            }
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            throw new ApplicationException("Failed to apply login information to the report - " +
+    //                ex.Message);
+    //        }
+    //    }
     }
 }
