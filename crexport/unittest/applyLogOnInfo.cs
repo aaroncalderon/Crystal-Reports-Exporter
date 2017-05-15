@@ -1,4 +1,9 @@
-﻿        /// <summary>
+﻿        /// <source>
+        /// This code came from
+        /// https://archive.sap.com/discussions/thread/1891114
+        /// </source>
+        /// 
+        /// <summary>
         /// Defines the datasource connectivity information for the report
         /// </summary>
         /// <param name="document">Crystal Report ReportDocument</param>
