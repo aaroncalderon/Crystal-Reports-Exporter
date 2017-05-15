@@ -275,6 +275,8 @@ namespace crexport
 
                             #region Apply to connections, tables and sub-reports
 
+                            // reset connections
+                            Report.DataSourceConnections.Clear();
                             //
                             // Main connection?
                             //
