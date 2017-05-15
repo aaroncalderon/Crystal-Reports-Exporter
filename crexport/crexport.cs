@@ -205,6 +205,7 @@ namespace crexport
                                 WriteLog("Integrated Security = " + Report.DataSourceConnections[i].IntegratedSecurity.ToString());
                                 WriteLog("Default Server Name = " + Report.DataSourceConnections[i].ServerName);
                                 WriteLog("Default Database Name = " + Report.DataSourceConnections[i].DatabaseName);
+
                                 Console.WriteLine(Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("VendorType").Value);
                                 //WriteLog("Databasee = " + Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("Database").Value);
                                 //WriteLog("Data Source = " + Report.DataSourceConnections[i].LogonProperties.LookupNameValuePair("Data Source").Value);
@@ -271,6 +272,9 @@ namespace crexport
                                 }
                             }
 
+                            // set default login
+                            logonInfo.ConnectionInfo.ServerName = Report.DataSourceConnections[0].ServerName;
+                            logonInfo.ConnectionInfo.DatabaseName = Report.DataSourceConnections[0].DatabaseName;
                             #endregion 
 
                             #region Apply to connections, tables and sub-reports
