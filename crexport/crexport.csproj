@@ -97,8 +97,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ReportInfo.cs" />
-    <Compile Include="unittest\applyLogOnInfo.cs" />
     <Content Include="App.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="unittest\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
